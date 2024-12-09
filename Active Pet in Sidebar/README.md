@@ -1,4 +1,6 @@
-# Active Pet in Sidebar
+# [DEPRECATED] Active Pet in Sidebar
+
+## This script is now deprecated as of 09/12/2024
 
 Do you miss seeing your active pet in the sidebar like on retail?
 
@@ -17,5 +19,6 @@ After installing the script, the "Active Pet" section will display and prompt yo
 ## TODO
 
   * Support for custom pet overlays
-  * Maybe try to preempt pet changes like detecting application of paint brush?
+  * Support for displaying a pet apart from your active pet
+  * Bugfix: Going to [Pet Preferences](https://www.grundos.cafe/quickref/adjustposition/) breaks saved images
 

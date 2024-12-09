@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name         [GC] - Active Pet in Sidebar
-// @description  Shows a small version of your active pet in the AIO sidebar.
+// @name         [DEPRECATED] [GC] - Active Pet in Sidebar
+// @description  [DEPRECATED] Shows a small version of your active pet in the AIO sidebar. Now part of GC officially as of 09/12/2024.
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=grundos.cafe
 // @match        https://www.grundos.cafe/*
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @author       aether
 // @namespace    https://github.com/hlmartin/gc-userscripts/
-// @version      1.0.0
+// @version      1.0.1
 // @license      MIT
 // @supportURL   https://github.com/hlmartin/gc-userscripts/issues
 // @downloadURL  https://github.com/hlmartin/gc-userscripts/raw/refs/heads/main/Active%20Pet%20in%20Sidebar/active-pet-in-sidebar.user.js
