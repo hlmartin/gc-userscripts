@@ -6,7 +6,7 @@
 // @match        https://www.grundos.cafe/games/slots/
 // @author       aether
 // @namespace    https://github.com/hlmartin/gc-userscripts/
-// @version      1.0.0
+// @version      1.0.1
 // @license      MIT
 // @supportURL   https://github.com/hlmartin/gc-userscripts/issues
 // ==/UserScript==

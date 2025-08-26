@@ -8,4 +8,6 @@ Press Enter to spin the slots. When holds are available, you can toggle them on 
 
 ## Changelog
 
+**1.0.1:** Fix overeager URL match.
+
 **1.0.0:** Initial release.
