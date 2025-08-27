@@ -8,7 +8,7 @@
 // @version      1.0.0
 // @license      MIT
 // @supportURL   https://github.com/hlmartin/gc-userscripts/issues
-// @require      https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/dist/sortable.min.js
+// @require      https://cdn.jsdelivr.net/gh/tofsjonas/sortable@4.1.1/dist/sortable.min.js
 // @grant        GM_addStyle
 // ==/UserScript==
 
