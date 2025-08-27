@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         [GC] - Smarter Stock Market
+// @name         [GC] Smarter Stock Market
 // @description  Highlights stocks that meet thresholds for buying and selling.
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=grundos.cafe
 // @match        https://www.grundos.cafe/games/stockmarket/*
@@ -8,7 +8,7 @@
 // @version      1.0.0
 // @license      MIT
 // @supportURL   https://github.com/hlmartin/gc-userscripts/issues
-// @require      https://cdn.jsdelivr.net/gh/tofsjonas/sortable@4.1.1/dist/sortable.min.js
+// @require      https://cdn.jsdelivr.net/npm/sortable-tablesort@4.1.1/dist/sortable.min.js
 // @resource     SORTABLE_CSS https://cdn.jsdelivr.net/gh/tofsjonas/sortable@4.1.1/dist/sortable-base.min.css
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
