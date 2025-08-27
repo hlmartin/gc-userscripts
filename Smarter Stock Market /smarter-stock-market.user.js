@@ -9,7 +9,9 @@
 // @license      MIT
 // @supportURL   https://github.com/hlmartin/gc-userscripts/issues
 // @require      https://cdn.jsdelivr.net/gh/tofsjonas/sortable@4.1.1/dist/sortable.min.js
+// @resource     SORTABLE_CSS https://cdn.jsdelivr.net/gh/tofsjonas/sortable@4.1.1/dist/sortable-base.min.css
 // @grant        GM_addStyle
+// @grant        GM_getResourceText
 // ==/UserScript==
 
 // ------------------------------------------------------
@@ -21,7 +23,10 @@ const HIGHLIGHT_COLOUR = '#bdbdff'; // a hex colour or HTML-safe colour name
 
 // ------------------------------------------------------
 
-const css = `
+const sortableCss = GM_getResourceText("SORTABLE_CSS");
+GM_addStyle(sortableCss);
+
+const customCss = `
   .highlighted-cell {
     background-color: ${HIGHLIGHT_COLOUR} !important;
   }
@@ -30,100 +35,108 @@ const css = `
     text-align: center;
   }
 `;
-GM_addStyle(css);
+GM_addStyle(customCss);
 
-const sortTable = ({tableName, applyHighlightFn, displayNoHighlightMessage, noHighlightMessage}) => {
-  const tableClass = `.${tableName}-table`;
-  const cellClass = `.${tableName}-cell`;
+let tableName;
 
-  const table = document.querySelector(tableClass);
-  table.classList.add("sortable", "n-last");
+const tableClass = () => `.${tableName}-table`;
+const cellClass = () => `.${tableName}-cell`;
+
+const sortTable = ({applyHighlightFn, displayNoHighlightMessage, noHighlightMessage}) => {
+  const table = document.querySelector(tableClass());
+  if (!table) {
+    return;
+  }
+  table.classList.add("sortable");
 
   // Exclude the top-most headers and logo column from being sortable
-  const hasTieredHeaders = document.querySelectorAll(`${tableClass} > thead > tr`).length > 1;
+  const hasTieredHeaders = document.querySelectorAll(`${tableClass()} > thead > tr`).length > 1;
   if (hasTieredHeaders) {
-    const topHeaders = document.querySelectorAll(`${tableClass} > thead > tr:first-of-type > th`);
+    const topHeaders = document.querySelectorAll(`${tableClass()} > thead > tr:first-of-type > th`);
     topHeaders.forEach((header) => header.classList.add("no-sort"));
   }
 
-  const logo = document.querySelector(`${tableClass} > thead > tr:last-of-type > th:first-of-type`);
+  const logo = document.querySelector(`${tableClass()} > thead > tr:last-of-type > th:first-of-type`);
   logo.classList.add("no-sort");
 
   // Give the totals row a unique id so we can find it later
-  const lastRow = document.querySelector(`${tableClass} > tbody > tr:last-of-type`);
+  const lastRow = document.querySelector(`${tableClass()} > tbody > tr:last-of-type`);
   if (lastRow.textContent.includes("Totals")) {
     lastRow.id = "totals-row";
   }
 
   // Give the % Change rows a more normative sort value so it properly sorts them
   // in the order of positive, zero, and negative percentages.
-  const rows = document.querySelectorAll(`${tableClass} > tbody > tr`);
+  const rows = document.querySelectorAll(`${tableClass()} > tbody > tr`);
   rows.forEach((row) => {
     const isHidden = window.getComputedStyle(row).display === "none";
     if (isHidden) {
       return;
     }
 
-    const change = row.querySelector(`${cellClass}:last-of-type`);
+    const change = row.querySelector(`${cellClass()}:last-of-type`);
     const sortValue = change.textContent.replace(/\s|%|\+/g, '');
 
     change.setAttribute("data-sort", sortValue)
 
-    if (applyHighlightFn(row, cellClass)) {
+    if (applyHighlightFn(row)) {
       row.classList.add("highlighted-row");
       Object.values(row.children).forEach((cell) => cell.classList.add("highlighted-cell"));
     }
   });
 
-  const highlightedRows = document.querySelectorAll(".highlighted-row");
-  highlightsToTop(highlightedRows, tableClass);
-
-  if (highlightedRows.length === 0 && displayNoHighlightMessage) {
+  const highlightedRow = document.querySelector(".highlighted-row");
+  if (!highlightedRow && displayNoHighlightMessage) {
     const div = document.createElement("div");
     div.textContent = noHighlightMessage;
     div.classList.add("no-stocks");
+
     const tableContainer = table.closest("div.center");
     tableContainer.prepend(div);
   };
 }
 
-const isSellable = (row, cellClass) => {
-  const change = row.querySelector(`${cellClass}:last-of-type`);
+const isSellable = (row) => {
+  const change = row.querySelector(`${cellClass()}:last-of-type`);
   const sortValue = change.getAttribute("data-sort");
   return parseFloat(sortValue) >= SELL_THRESHOLD;
 };
 
-const isBuyable = (row, cellClass) => {
-  const currentValue = row.querySelector(`${cellClass}:nth-child(6)`).textContent;
+const isBuyable = (row) => {
+  const currentValue = row.querySelector(`${cellClass()}:nth-child(6)`).textContent;
   return parseInt(currentValue) == BUY_THRESHOLD;
 };
 
 const sortPortfolio = () => {
   const config = {
-    tableName: "portfolio",
     applyHighlightFn: isSellable,
     displayNoHighlightMessage: false
   };
   sortTable(config);
+
+  // default sort by % change
+  const change = document.querySelector(`${tableClass()} > thead > tr:last-of-type > th:last-of-type`)
+  change.click();
 }
 
 const sortStocks = () => {
   const config = {
-    tableName: "stock",
     applyHighlightFn: isBuyable,
     displayNoHighlightMessage: true,
     noHighlightMessage: "😭 There are no buyable stocks at this time."
   };
   sortTable(config);
+  highlightsToTop();
 }
 
-const highlightsToTop = (highlighted, tableClass) => {
+const highlightsToTop = () => {
   // Moves any highlighted values to the top.
+  const highlighted = document.querySelectorAll(".highlighted-row");
   if (!highlighted) {
     return;
   }
 
-  const tbody = document.querySelector(`${tableClass} > tbody`);
+  const tbody = document.querySelector(`${tableClass()} > tbody`);
   highlighted.forEach((row) => {
     const clonedRow = row.cloneNode(true);
     tbody.prepend(clonedRow);
@@ -138,7 +151,7 @@ const totalsToBottom = () => {
     return;
   }
 
-  const tbody = document.querySelector(".portfolio-table > tbody");
+  const tbody = document.querySelector(`${tableClass()} > tbody`);
   const cloneTotals = totals.cloneNode(true);
   tbody.append(cloneTotals);
   totals.remove();
@@ -146,14 +159,17 @@ const totalsToBottom = () => {
 
 document.addEventListener('sort-end', function() {
   totalsToBottom();
+  highlightsToTop();
 });
 
 window.addEventListener('load', function() {
   switch (document.location.pathname) {
     case "/games/stockmarket/stocks/":
+      tableName = 'stock';
       sortStocks();
       break;
     case "/games/stockmarket/portfolio/":
+      tableName = 'portfolio';
       sortPortfolio();
       break;
   }
