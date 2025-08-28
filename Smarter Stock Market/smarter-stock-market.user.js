@@ -5,7 +5,7 @@
 // @match        https://www.grundos.cafe/games/stockmarket/*
 // @author       aether
 // @namespace    https://github.com/hlmartin/gc-userscripts/
-// @version      1.0.0
+// @version      1.1.0
 // @license      MIT
 // @supportURL   https://github.com/hlmartin/gc-userscripts/issues
 // @require      https://cdn.jsdelivr.net/npm/sortable-tablesort@4.1.1/dist/sortable.min.js
@@ -19,16 +19,20 @@
 
 const BUY_THRESHOLD = 15; // in neopoints
 const SELL_THRESHOLD = 150.00; // in change percentage
-const HIGHLIGHT_COLOUR = '#bdbdff'; // a hex colour or HTML-safe colour name
+const HIGHLIGHT_COLOUR = ''; // a hex colour or HTML-safe colour name
 
 // ------------------------------------------------------
 
 const sortableCss = GM_getResourceText("SORTABLE_CSS");
 GM_addStyle(sortableCss);
 
+const isDarkMode = document.querySelector('html').getAttribute('data-dark-mode') === 'true';
+const defaultHighlightColour = isDarkMode ? '#313171' : '#bdbdff';
+const highlightColour = HIGHLIGHT_COLOUR === '' ? defaultHighlightColour : HIGHLIGHT_COLOUR;
+
 const customCss = `
   .highlighted-cell {
-    background-color: ${HIGHLIGHT_COLOUR} !important;
+    background-color: ${highlightColour} !important;
   }
   .no-stocks {
     font-size: 24px;

@@ -17,8 +17,10 @@ Currently done at the top of the script itself. If there's interest, I'll create
 
 **SELL_THRESHOLD (float):** The minimum change percentage you want to sell stocks at. Default is 150%.
 
-**HIGHLIGHT_COLOUR (string):** A hex colour or HTML-safe colour name that is used to highlight stocks above/below. Defaults to something that kind of matches the existing table theme.
+**HIGHLIGHT_COLOUR (string; optional):** A hex colour or HTML-safe colour name that is used to highlight stocks above/below. Defaults to something that kind of matches the existing table theme.
 
 ## Changelog
+
+**1.1.0:** If you have dark mode enabled, the default highlight colour will now be something that you can more easily read the grey and white text on. Configuring your own custom colour with the `HIGHLIGHT_COLOUR` variable will still take preference either way.
 
 **1.0.0:** Initial release.
