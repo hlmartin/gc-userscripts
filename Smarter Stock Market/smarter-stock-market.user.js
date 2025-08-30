@@ -69,19 +69,28 @@ const sortTable = ({applyHighlightFn, displayNoHighlightMessage, noHighlightMess
     lastRow.id = "totals-row";
   }
 
-  // Give the % Change rows a more normative sort value so it properly sorts them
-  // in the order of positive, zero, and negative percentages.
   const rows = document.querySelectorAll(`${tableClass()} > tbody > tr`);
   rows.forEach((row) => {
     const isHidden = window.getComputedStyle(row).display === "none";
-    if (isHidden) {
+    const isTotals = row.getAttribute("id") === "totals-row";
+    if (isHidden || isTotals) {
       return;
     }
 
+    // Give the % Change rows a more normative sort value so it properly sorts them
+    // in the order of positive, zero, and negative percentages.
     const change = row.querySelector(`${cellClass()}:last-of-type`);
-    const sortValue = change.textContent.replace(/\s|%|\+/g, '');
+    change.setAttribute("data-sort", change.textContent.replace(/\s|%|\+/g, ''))
 
-    change.setAttribute("data-sort", sortValue)
+    // The other large numerical values need a sort value excluding commas
+    const qty = row.querySelector(`${cellClass()}:nth-of-type(6)`)
+    qty.setAttribute("data-sort", qty.textContent.replace(/\s|\,+/g, ''));
+
+    const paid = row.querySelector(`${cellClass()}:nth-of-type(7)`)
+    paid.setAttribute("data-sort", paid.textContent.replace(/\s|\,+/g, ''));
+
+    const mktValue = row.querySelector(`${cellClass()}:nth-of-type(8)`)
+    mktValue.setAttribute("data-sort", mktValue.textContent.replace(/\s|\,+/g, ''));
 
     if (applyHighlightFn(row)) {
       row.classList.add("highlighted-row");
