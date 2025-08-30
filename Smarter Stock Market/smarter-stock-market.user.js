@@ -150,7 +150,16 @@ const highlightsToTop = () => {
   }
 
   const tbody = document.querySelector(`${tableClass()} > tbody`);
-  highlighted.forEach((row) => {
+  // Clones each row in reverse to maintain initial sorted order
+  Array.from(highlighted).reverse().forEach((row) => {
+    const ticker = row.querySelector("td:nth-of-type(2) a").textContent;
+    const sellRow = document.getElementById(ticker);
+    if (sellRow) {
+      const clonedSellRow = sellRow.cloneNode(true);
+      tbody.prepend(clonedSellRow);
+      sellRow.remove();
+    }
+
     const clonedRow = row.cloneNode(true);
     tbody.prepend(clonedRow);
     row.remove();
