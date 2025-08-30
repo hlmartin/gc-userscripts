@@ -11,7 +11,7 @@ It's inspired greatly by the [Stock Market Extras](https://gist.github.com/jking
 
 ## Configuration
 
-Currently done at the top of the script itself. If there's interest, I'll create a configuration UI - let me know in discord!
+Currently only able to be done by editing the script in Tampermonkey, where you'll find some variables marked as such. An interface on the website to do this instead will come soon™.
 
 **BUY_THRESHOLD (integer):** The value you want to buy stocks at. Default is 15 NP.
 
@@ -21,6 +21,15 @@ Currently done at the top of the script itself. If there's interest, I'll create
 
 ## Changelog
 
-**1.1.0:** If you have dark mode enabled, the default highlight colour will now be something that you can more easily read the grey and white text on. Configuring your own custom colour with the `HIGHLIGHT_COLOUR` variable will still take preference either way.
+**1.1.1**
 
-**1.0.0:** Initial release.
+* Fixed a bug where when selling highlighted stocks, the "sell" form will show in the wrong location in the list.
+* Fixed a bug where highlighted stocks were displayed in the reverse order to what the rest of the table was sorted by.
+
+**1.1.0**
+
+* If you have dark mode enabled, the default highlight colour will now be something that you can more easily read the grey and white text on. Configuring your own custom colour with the `HIGHLIGHT_COLOUR` variable will still take preference either way.
+
+**1.0.0**
+
+* Initial release.

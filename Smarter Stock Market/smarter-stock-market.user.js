@@ -5,7 +5,7 @@
 // @match        https://www.grundos.cafe/games/stockmarket/*
 // @author       aether
 // @namespace    https://github.com/hlmartin/gc-userscripts/
-// @version      1.1.0
+// @version      1.1.1
 // @license      MIT
 // @supportURL   https://github.com/hlmartin/gc-userscripts/issues
 // @require      https://cdn.jsdelivr.net/npm/sortable-tablesort@4.1.1/dist/sortable.min.js
@@ -46,16 +46,18 @@ let tableName;
 const tableClass = () => `.${tableName}-table`;
 const cellClass = () => `.${tableName}-cell`;
 
-const sortTable = ({applyHighlightFn, displayNoHighlightMessage, noHighlightMessage}) => {
+const sortTable = (applyHighlightFn) => {
+  const isStocks = tableName === 'stocks';
+  const isPortfolio = tableName === 'portfolio';
+
   const table = document.querySelector(tableClass());
   if (!table) {
     return;
   }
   table.classList.add("sortable");
 
-  // Exclude the top-most headers and logo column from being sortable
-  const hasTieredHeaders = document.querySelectorAll(`${tableClass()} > thead > tr`).length > 1;
-  if (hasTieredHeaders) {
+  // Exclude the top-tier portfolio headers and logo column from being sortable
+  if (isPortfolio) {
     const topHeaders = document.querySelectorAll(`${tableClass()} > thead > tr:first-of-type > th`);
     topHeaders.forEach((header) => header.classList.add("no-sort"));
   }
@@ -83,14 +85,21 @@ const sortTable = ({applyHighlightFn, displayNoHighlightMessage, noHighlightMess
     change.setAttribute("data-sort", change.textContent.replace(/\s|%|\+/g, ''))
 
     // The other large numerical values need a sort value excluding commas
-    const qty = row.querySelector(`${cellClass()}:nth-of-type(6)`)
-    qty.setAttribute("data-sort", qty.textContent.replace(/\s|\,+/g, ''));
+    if (isPortfolio) {
+      const qty = row.querySelector(`${cellClass()}:nth-of-type(6)`);
+      qty.setAttribute("data-sort", qty.textContent.replace(/\s|\,+/g, ''));
 
-    const paid = row.querySelector(`${cellClass()}:nth-of-type(7)`)
-    paid.setAttribute("data-sort", paid.textContent.replace(/\s|\,+/g, ''));
+      const paid = row.querySelector(`${cellClass()}:nth-of-type(7)`);
+      paid.setAttribute("data-sort", paid.textContent.replace(/\s|\,+/g, ''));
 
-    const mktValue = row.querySelector(`${cellClass()}:nth-of-type(8)`)
-    mktValue.setAttribute("data-sort", mktValue.textContent.replace(/\s|\,+/g, ''));
+      const mktValue = row.querySelector(`${cellClass()}:nth-of-type(8)`);
+      mktValue.setAttribute("data-sort", mktValue.textContent.replace(/\s|\,+/g, ''));
+    }
+
+    if (isStocks) {
+      const volume = row.querySelector(`${cellClass}:nth-of-type(4)`);
+      volume.setAttribute("data-sort", volume.textContent.replace(/\s|\,+/g, ''));
+    }
 
     if (applyHighlightFn(row)) {
       row.classList.add("highlighted-row");
@@ -98,10 +107,10 @@ const sortTable = ({applyHighlightFn, displayNoHighlightMessage, noHighlightMess
     }
   });
 
-  const highlightedRow = document.querySelector(".highlighted-row");
-  if (!highlightedRow && displayNoHighlightMessage) {
+  const hasHighlightedRows = !!document.querySelector(".highlighted-row");
+  if (!hasHighlightedRows && isStocks) {
     const div = document.createElement("div");
-    div.textContent = noHighlightMessage;
+    div.textContent = "😭 There are no buyable stocks at this time.";
     div.classList.add("no-stocks");
 
     const tableContainer = table.closest("div.center");
@@ -121,11 +130,7 @@ const isBuyable = (row) => {
 };
 
 const sortPortfolio = () => {
-  const config = {
-    applyHighlightFn: isSellable,
-    displayNoHighlightMessage: false
-  };
-  sortTable(config);
+  sortTable(isSellable);
 
   // default sort by % change
   const change = document.querySelector(`${tableClass()} > thead > tr:last-of-type > th:last-of-type`)
@@ -133,12 +138,7 @@ const sortPortfolio = () => {
 }
 
 const sortStocks = () => {
-  const config = {
-    applyHighlightFn: isBuyable,
-    displayNoHighlightMessage: true,
-    noHighlightMessage: "😭 There are no buyable stocks at this time."
-  };
-  sortTable(config);
+  sortTable(isBuyable);
   highlightsToTop();
 }
 
